@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的站点</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: grid; place-items: center;
+    font: 16px/1.7 system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #0b0f14; color: #e6edf3; padding: 24px;
+  }
+  .card {
+    max-width: 680px; width: 100%; padding: 40px;
+    background: #121922; border: 1px solid #1f2a37; border-radius: 16px;
+  }
+  h1 { margin: 0 0 8px; font-size: 30px; letter-spacing: .5px; }
+  .sub { color: #8b98a5; margin: 0 0 28px; }
+  ul { padding-left: 20px; color: #b9c4cf; }
+  li { margin: 6px 0; }
+  code { background: #1b2430; padding: 2px 6px; border-radius: 6px; font-size: 14px; }
+  .foot { margin-top: 28px; padding-top: 20px; border-top: 1px solid #1f2a37; color: #6b7785; font-size: 13px; }
+</style>
+</head>
+<body>
+  <main class="card">
+    <h1>站点已上线</h1>
+    <p class="sub">这个页面现在挂在公网地址上，任何人都能访问。</p>
+    <ul>
+      <li>内容就在 <code>site/index.html</code>，改完重新发布即可</li>
+      <li>静态文件、CSS、图片都放在 <code>site/</code> 目录里</li>
+      <li>需要后端时再往上加接口，静态托管先跑通</li>
+    </ul>
+    <div class="foot">零成本部署 · 无需服务器 · 无需备案</div>
+  </main>
+</body>
+</html>
