@@ -227,7 +227,7 @@
       <a href="#tech">技术架构</a>
       <a href="#download">获取程序</a>
     </div>
-    <a href="https://1826447843.share.123pan.cn/123pan/osORjv-0mASh" data-download target="_blank" rel="noopener" class="btn btn-grad btn-sm">立即下载 <span class="arrow">↗</span></a>
+    <a href="https://github.com/3922598104/nexus-updates/releases/download/v1.1.0/NexusInjector.exe" data-download target="_blank" rel="noopener" class="btn btn-grad btn-sm">立即下载 <span class="arrow">↗</span></a>
   </div>
 </nav>
 
@@ -238,7 +238,7 @@
     <div class="tagline reveal">重新定义战场感知</div>
     <p class="lead reveal">基于 .NET 10 与 Frida 构建的生死狙击增强框架。集透视、自瞄、弹道修正、枪械美化与本地换枪于一体，拥有现代化深色控制台与稳定的自动注入流程。</p>
     <div class="hero-cta reveal">
-      <a href="https://1826447843.share.123pan.cn/123pan/osORjv-0mASh" data-download target="_blank" rel="noopener" class="btn btn-grad btn-lg">下载最新版 <span id="verBtn2"></span> <span class="arrow">↗</span></a>
+      <a href="https://github.com/3922598104/nexus-updates/releases/download/v1.1.0/NexusInjector.exe" data-download target="_blank" rel="noopener" class="btn btn-grad btn-lg">下载最新版 <span id="verBtn2"></span> <span class="arrow">↗</span></a>
       <a href="#features" class="btn btn-ghost btn-lg">探索功能</a>
     </div>
     <div class="hint reveal">单文件 exe · 免安装 · 打开即用</div>
@@ -369,7 +369,7 @@ session.<span class="f">detached</span>.<span class="f">then</span>(() =&gt; <sp
     <div class="cta-box reveal">
       <h2>准备好进入战场了吗？</h2>
       <p>下载最新版 NEXUS Injector，单文件 exe 打开即用。</p>
-      <a href="https://1826447843.share.123pan.cn/123pan/osORjv-0mASh" data-download target="_blank" rel="noopener" class="btn btn-grad btn-lg">立即下载 <span id="verBtn">v1.0.0</span> <span class="arrow">↗</span></a>
+      <a href="https://github.com/3922598104/nexus-updates/releases/download/v1.1.0/NexusInjector.exe" data-download target="_blank" rel="noopener" class="btn btn-grad btn-lg">立即下载 <span id="verBtn">v1.0.0</span> <span class="arrow">↗</span></a>
       <div class="version" id="buildLine">LATEST BUILD · <span id="buildDate">2026.11.17</span> · <span id="buildTech">NET10 / WPF x64</span></div>
       <div class="version" id="buildNote" style="display:none;color:var(--muted);font-family:var(--sans);font-size:12px;letter-spacing:0;max-width:560px;margin:10px auto 0;line-height:1.7"></div>
     </div>
@@ -388,8 +388,10 @@ session.<span class="f">detached</span>.<span class="f">then</span>(() =&gt; <sp
   (function () {
     const VERSION_URL = 'https://raw.githubusercontent.com/3922598104/nexus-updates/main/version.json';
     const REFRESH_MS  = 5 * 60 * 1000;  // 每 5 分钟自动重新读取一次
-    // 若希望下载按钮直接指向 version.json 里的 exe 直链（GitHub Release），改成 true
-    const HOOK_DOWNLOAD_LINKS = false;
+    // 下载按钮跟随 version.json 的 exe 直链（GitHub Release），实时指向最新版
+    const HOOK_DOWNLOAD_LINKS = true;
+    // 仓库基础地址：当 version.json 的 exe 只写了文件名时，用它拼出完整直链
+    const RELEASE_BASE = 'https://github.com/3922598104/nexus-updates/releases/download';
 
     function setText(id, text) {
       const el = document.getElementById(id);
@@ -404,6 +406,16 @@ session.<span class="f">detached</span>.<span class="f">then</span>(() =&gt; <sp
       if (!d) return null;
       const m = String(d).match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);
       return m ? m[1] + '.' + m[2].padStart(2, '0') + '.' + m[3].padStart(2, '0') : String(d);
+    }
+    // version.json 的 exe 可能是完整 URL（发布器默认写入），也可能只写了文件名。
+    // 统一解析成可直接下载的完整直链，保证下载按钮永远指向最新版本。
+    function resolveDownloadUrl(m, ver) {
+      const raw = (m.exe || m.download || '').toString().trim();
+      if (!raw) return null;
+      if (/^https?:\/\//i.test(raw)) return raw;              // 已是完整直链
+      const tag = ver || ('v' + String(m.version || '').replace(/^v/i, ''));
+      const name = raw.replace(/^\.?\//, '');                // 去掉 ./ 或开头的 /
+      return RELEASE_BASE + '/' + (tag || 'latest') + '/' + encodeURIComponent(name);
     }
     function apply(m) {
       const ver = normalizeVer(m.version);
@@ -423,8 +435,11 @@ session.<span class="f">detached</span>.<span class="f">then</span>(() =&gt; <sp
           noteEl.style.display = 'none';
         }
       }
-      if (HOOK_DOWNLOAD_LINKS && m.exe) {
-        document.querySelectorAll('[data-download]').forEach(a => { a.href = m.exe; });
+      if (HOOK_DOWNLOAD_LINKS) {
+        const url = resolveDownloadUrl(m, ver);
+        if (url) {
+          document.querySelectorAll('[data-download]').forEach(a => { a.href = url; });
+        }
       }
       if (ver) document.title = 'NEXUS — 生死狙击增强框架 ' + ver;
     }
